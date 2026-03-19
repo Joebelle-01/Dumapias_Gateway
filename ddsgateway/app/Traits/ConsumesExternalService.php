@@ -7,20 +7,24 @@ trait ConsumesExternalService
 {
     public function performRequest($method, $requestUrl, $form_params = [], $headers = [])
     {
-        $client = new Client([
-            'base_uri' => $this->baseUri,
-            'timeout'  => 30.0,
-        ]);
+        try {
+            $client = new Client([
+                'base_uri' => $this->baseUri,
+                'timeout' => 30.0,
+            ]);
 
-        if (isset($this->secret)) {
-            $headers['Authorization'] = $this->secret;
+            $response = $client->request($method, $requestUrl, [
+                'form_params' => $form_params,
+                'headers' => $headers
+            ]);
+
+            return $response->getBody()->getContents();
+        } catch (\Exception $e) {
+            return json_encode([
+                'error' => $e->getMessage(),
+                'base_uri' => $this->baseUri,
+                'request_url' => $requestUrl
+            ]);
         }
-
-        $response = $client->request($method, $requestUrl, [
-            'form_params' => $form_params,
-            'headers'     => $headers,
-        ]);
-
-        return $response->getBody()->getContents();
     }
 }
