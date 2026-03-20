@@ -6,6 +6,11 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+// OAuth2 token endpoint (Passport) - Lumen-compatible route registration
+$router->post('/oauth/token', [
+    'uses' => '\\Laravel\\Passport\\Http\\Controllers\\AccessTokenController@issueToken',
+]);
+
 // Public route (no API key needed)
 $router->get('/health', function () {
     return response()->json([
@@ -19,7 +24,7 @@ $router->get('/health', function () {
 });
 
 // Protected API routes (require API key)
-$router->group(['middleware' => 'api.key'], function () use ($router) {
+$router->group(['middleware' => 'api.key_or_oauth'], function () use ($router) {
     
     // Site 1 routes
     $router->group(['prefix' => 'api/users1'], function () use ($router) {

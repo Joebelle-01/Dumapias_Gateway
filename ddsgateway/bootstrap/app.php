@@ -25,6 +25,7 @@ $app = new Laravel\Lumen\Application(
 
 $app->withFacades();
 $app->withEloquent();
+$app->configure('auth');
 $app->configure('services');
 
 
@@ -79,7 +80,8 @@ $app->configure('app');
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
-    'api.key' => App\Http\Middleware\ApiKeyMiddleware::class, 
+    'api.key' => App\Http\Middleware\ApiKeyMiddleware::class,
+    'api.key_or_oauth' => App\Http\Middleware\ApiKeyOrOauthMiddleware::class,
 ]);
 
 /*
@@ -94,7 +96,10 @@ $app->routeMiddleware([
 */
 
 // $app->register(App\Providers\AppServiceProvider::class);
-// $app->register(App\Providers\AuthServiceProvider::class);
+// Passport for OAuth2 (Lumen-compatible wiring)
+// Register our AuthServiceProvider first so it can disable Passport's default (Laravel) routes.
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(Laravel\Passport\PassportServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 
 /*
