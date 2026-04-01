@@ -4,3 +4,8 @@ Homestead.json
 Homestead.yaml
 .env
 .phpunit.result.cache
+.rnd
+/storage/*.key
+
+_pdf_p30_46/
+

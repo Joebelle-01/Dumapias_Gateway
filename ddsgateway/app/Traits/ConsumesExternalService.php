@@ -8,6 +8,10 @@ trait ConsumesExternalService
     public function performRequest($method, $requestUrl, $form_params = [], $headers = [])
     {
         try {
+            if (isset($this->secret) && $this->secret) {
+                $headers['Authorization'] = $this->secret;
+            }
+
             $client = new Client([
                 'base_uri' => $this->baseUri,
                 'timeout' => 30.0,
